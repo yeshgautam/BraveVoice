@@ -1,0 +1,9 @@
+{
+  "name": "stutter-detector",
+  "version": "1.0.0",
+  "description": "On-device real-time stutter detection (repetition/prolongation/block) for BraveVoice. iOS only — uses AVAudioEngine + Accelerate FFT for raw audio access that expo-speech-recognition does not expose.",
+  "main": "index.ts",
+  "types": "index.ts",
+  "license": "UNLICENSED",
+  "private": true
+}

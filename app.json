@@ -7,9 +7,13 @@
     "icon": "./assets/images/icon.png",
     "scheme": "bravevoice",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "BraveVoice listens to your voice to help you practice speaking. Your voice never leaves your device.",
+        "NSMicrophoneUsageDescription": "BraveVoice listens to your voice to help you practice speaking. Your voice never leaves your device."
+      },
+      "bundleIdentifier": "com.yeshgautam.BraveVoice"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +23,10 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "output": "static",
@@ -38,11 +45,35 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "BraveVoice needs your microphone to hear you practice speaking!",
+          "speechRecognitionPermission": "BraveVoice needs speech recognition to check the words you practice!"
+        }
+      ],
+      "expo-asset",
+      "expo-audio",
+      "expo-sqlite",
+      [
+        "expo-media-library",
+        {
+          "photosPermission": false,
+          "savePhotosPermission": "BraveVoice needs access to save your progress card to Photos."
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f55d3693-e648-4a88-a40c-fd7c0dae6a92"
+      }
+    },
+    "owner": "yeshgautam"
   }
 }

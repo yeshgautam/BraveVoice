@@ -18,6 +18,17 @@ const MAPPING = {
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'chart.line.uptrend.xyaxis': 'trending-up',
+  'gamecontroller.fill': 'sports-esports',
+  'person.fill': 'person',
+  'trophy.fill': 'emoji-events',
+  'rosette': 'military-tech',
+  'person.2.fill': 'groups',
+  'square.and.pencil': 'assignment',
+  'chart.bar.fill': 'bar-chart',
+  'gearshape.fill': 'settings',
+  'bell.fill': 'notifications',
+  'stethoscope': 'medical-services',
 } as IconMapping;
 
 /**
