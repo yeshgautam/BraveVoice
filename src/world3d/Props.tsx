@@ -25,14 +25,14 @@ export function IceCrystalTree() {
   const glowTex = useMemo(() => radialGlowTexture('#7DF9FF', '#003A66'), []);
   const crystals = useMemo(() => {
     const rnd = mulberry32(31);
-    return Array.from({ length: 7 }, (_, i) => {
-      const a = (Math.PI * 2 * i) / 7 + 0.4;
-      const r = rand(rnd, 0.5, 1.5);
+    return Array.from({ length: 9 }, (_, i) => {
+      const a = (Math.PI * 2 * i) / 9 + 0.4;
+      const r = rand(rnd, 1.1, 2.6);
       return {
         pos: [Math.cos(a) * r, 0, Math.sin(a) * r] as [number, number, number],
-        height: rand(rnd, 0.9, 2.1),
-        radius: rand(rnd, 0.22, 0.45),
-        tilt: rand(rnd, -0.16, 0.16),
+        height: rand(rnd, 1.9, 4.2),
+        radius: rand(rnd, 0.42, 0.85),
+        tilt: rand(rnd, -0.2, 0.2),
       };
     });
   }, []);
@@ -52,7 +52,7 @@ export function IceCrystalTree() {
   return (
     <group position={[ICE_TREE.x, 0, ICE_TREE.z]}>
       <mesh geometry={branches} castShadow>
-        <meshStandardMaterial color="#D0E0E8" roughness={0.5} metalness={0.05} flatShading />
+        <meshStandardMaterial color="#9FB3C4" roughness={0.65} metalness={0.05} flatShading />
       </mesh>
       <mesh geometry={snow}>
         <meshStandardMaterial color={Palette.snow} roughness={0.75} flatShading />
@@ -77,19 +77,19 @@ export function IceCrystalTree() {
         ))}
       </group>
 
-      <pointLight ref={light} position={[0, 1.4, 0]} color={Palette.crystalBlue} intensity={24} distance={22} decay={2} />
+      <pointLight ref={light} position={[0, 2.0, 0]} color={Palette.crystalBlue} intensity={46} distance={30} decay={2} />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <planeGeometry args={[11, 11]} />
-        <meshBasicMaterial map={glowTex} transparent opacity={0.4} depthWrite={false} blending={THREE.AdditiveBlending} />
+        <planeGeometry args={[17, 17]} />
+        <meshBasicMaterial map={glowTex} transparent opacity={0.5} depthWrite={false} blending={THREE.AdditiveBlending} />
       </mesh>
 
       {/* Circular garden ring in the marble */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, 0]}>
-        <ringGeometry args={[4.4, 5.8, 48]} />
+        <ringGeometry args={[5.4, 7.2, 48]} />
         <meshStandardMaterial color="#90CAF9" transparent opacity={0.22} roughness={0.4} />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.016, 0]}>
-        <ringGeometry args={[5.75, 5.9, 48]} />
+        <ringGeometry args={[7.1, 7.3, 48]} />
         <meshBasicMaterial color={Palette.compass} transparent opacity={0.55} />
       </mesh>
     </group>
@@ -208,8 +208,11 @@ function OwlMedallion({ radius }: { radius: number }) {
   );
 }
 
-/** Both gate leaves, hinged open so the player walks in through the middle. */
-export function CastleGate() {
+/**
+ * Both gate leaves. They are hinged on the OUTER edge at the gateposts and swing
+ * toward the viewer, so the courtyard is framed by their lit inner faces.
+ */
+export function CastleGate({ animate = false }: { animate?: boolean }) {
   const wood = useMemo(() => {
     const t = woodTexture(256);
     t.wrapS = t.wrapT = THREE.RepeatWrapping;
@@ -218,81 +221,101 @@ export function CastleGate() {
   const leafRefs = useRef<Array<THREE.Group | null>>([]);
 
   useFrame((state) => {
-    // Gates ease open over the first two seconds of play, then settle.
-    const t = Math.min(1, Math.max(0, (state.clock.elapsedTime - 0.4) / 1.8));
+    const t = animate ? Math.min(1, Math.max(0, (state.clock.elapsedTime - 2.3) / 1.8)) : 1;
     const eased = t * t * (3 - 2 * t);
-    const angle = eased * (Math.PI * 0.44);
-    if (leafRefs.current[0]) leafRefs.current[0].rotation.y = angle;
-    if (leafRefs.current[1]) leafRefs.current[1].rotation.y = -angle;
+    const angle = eased * (Math.PI * 0.42);
+    // Left leaf opens counter-clockwise, right leaf clockwise, both toward +Z.
+    if (leafRefs.current[0]) leafRefs.current[0].rotation.y = -angle;
+    if (leafRefs.current[1]) leafRefs.current[1].rotation.y = angle;
   });
+
+  const hingeX = GATE.gap + GATE.leafWidth;
 
   return (
     <group position={[0, 0, GATE.z]}>
       {[-1, 1].map((side, idx) => (
         <group
           key={side}
-          position={[side * GATE.gap, 0, 0]}
+          position={[side * hingeX, 0, 0]}
           ref={(g) => {
             leafRefs.current[idx] = g;
           }}
         >
-          <group position={[(side * GATE.leafWidth) / 2, GATE.height / 2, 0]}>
+          {/* Leaf body reaches from the hinge back toward the centre line. */}
+          <group position={[-side * (GATE.leafWidth / 2), GATE.height / 2, 0]}>
             <mesh castShadow receiveShadow>
-              <boxGeometry args={[GATE.leafWidth, GATE.height, 0.45]} />
-              <meshStandardMaterial map={wood} color="#FFFFFF" roughness={0.85} />
+              <boxGeometry args={[GATE.leafWidth, GATE.height, 0.5]} />
+              <meshStandardMaterial map={wood} color="#C9A57A" roughness={0.78} metalness={0.05} />
             </mesh>
-            {/* Frame */}
+
+            {/* Heavy frame rails and stiles */}
             {[
-              { p: [0, GATE.height / 2 - 0.3, 0.02], s: [GATE.leafWidth, 0.6, 0.55] },
-              { p: [0, -GATE.height / 2 + 0.3, 0.02], s: [GATE.leafWidth, 0.6, 0.55] },
-              { p: [(-side * GATE.leafWidth) / 2 + side * 0.3, 0, 0.02], s: [0.6, GATE.height, 0.55] },
-              { p: [(side * GATE.leafWidth) / 2 - side * 0.3, 0, 0.02], s: [0.6, GATE.height, 0.55] },
+              { p: [0, GATE.height / 2 - 0.42, 0.03], s: [GATE.leafWidth, 0.84, 0.58] },
+              { p: [0, -GATE.height / 2 + 0.42, 0.03], s: [GATE.leafWidth, 0.84, 0.58] },
+              { p: [0, 0, 0.03], s: [GATE.leafWidth, 0.5, 0.56] },
+              { p: [GATE.leafWidth / 2 - 0.35, 0, 0.03], s: [0.7, GATE.height, 0.58] },
+              { p: [-GATE.leafWidth / 2 + 0.35, 0, 0.03], s: [0.7, GATE.height, 0.58] },
             ].map((f, i) => (
               <mesh key={i} position={f.p as [number, number, number]} castShadow>
                 <boxGeometry args={f.s as [number, number, number]} />
-                <meshStandardMaterial color="#1A0E07" roughness={0.9} />
+                <meshStandardMaterial color="#2A1809" roughness={0.9} />
               </mesh>
             ))}
-            {/* Owl medallion facing the courtyard */}
-            <group position={[0, 0.6, 0.3]} rotation={[Math.PI / 2, 0, 0]}>
-              <OwlMedallion radius={1.15} />
+
+            {/* Owl medallion on the inner face, turned to the courtyard */}
+            <group position={[0, 1.4, 0.32]} rotation={[Math.PI / 2, 0, 0]}>
+              <OwlMedallion radius={2.1} />
             </group>
-            {/* Gold hinges on the outer edge */}
-            {[-3, 0, 3].map((y) => (
-              <mesh key={y} position={[(-side * GATE.leafWidth) / 2 + side * 0.25, y, 0.3]} castShadow>
-                <boxGeometry args={[0.5, 1.2, 0.18]} />
-                <meshStandardMaterial color={Palette.gold} metalness={0.85} roughness={0.28} />
-              </mesh>
+
+            {/* Gold strap hinges on the outer edge */}
+            {[-GATE.height * 0.34, 0, GATE.height * 0.34].map((y) => (
+              <group key={y}>
+                <mesh position={[side * (GATE.leafWidth / 2 - 0.2), y, 0.3]} castShadow>
+                  <boxGeometry args={[GATE.leafWidth * 0.5, 0.75, 0.2]} />
+                  <meshStandardMaterial color={Palette.gold} metalness={0.88} roughness={0.3} />
+                </mesh>
+                <mesh position={[side * (GATE.leafWidth / 2 - 0.05), y, 0.3]} castShadow>
+                  <cylinderGeometry args={[0.24, 0.24, 1.1, 10]} />
+                  <meshStandardMaterial color="#8B6914" metalness={0.9} roughness={0.35} />
+                </mesh>
+              </group>
             ))}
+
             {/* Snow on the top rail */}
-            <mesh position={[0, GATE.height / 2 + 0.12, 0]}>
-              <boxGeometry args={[GATE.leafWidth, 0.22, 0.7]} />
+            <mesh position={[0, GATE.height / 2 + 0.2, 0]}>
+              <boxGeometry args={[GATE.leafWidth, 0.3, 0.8]} />
               <meshStandardMaterial color={Palette.snow} roughness={0.85} />
             </mesh>
           </group>
         </group>
       ))}
 
-      {/* Stone gateposts with wall lanterns */}
+      {/* Stone gateposts carrying the hinges and the wall lanterns */}
       {[-1, 1].map((side) => (
-        <group key={`post${side}`} position={[side * (GATE.gap + GATE.leafWidth + 0.6), 0, 0]}>
-          <mesh position={[0, GATE.height / 2, 0]} castShadow>
-            <boxGeometry args={[1.4, GATE.height + 1, 1.4]} />
-            <meshStandardMaterial color="#3A2410" roughness={0.9} />
+        <group key={`post${side}`} position={[side * (hingeX + 0.9), 0, 0]}>
+          <mesh position={[0, (GATE.height + 1) / 2, 0]} castShadow receiveShadow>
+            <boxGeometry args={[1.8, GATE.height + 1, 1.8]} />
+            <meshStandardMaterial color="#4A2E18" roughness={0.9} />
           </mesh>
-          <mesh position={[0, GATE.height + 0.6, 0]}>
-            <boxGeometry args={[1.7, 0.35, 1.7]} />
+          <mesh position={[0, GATE.height + 1.2, 0]}>
+            <boxGeometry args={[2.2, 0.45, 2.2]} />
             <meshStandardMaterial color={Palette.snow} roughness={0.85} />
           </mesh>
-          <mesh position={[-side * 0.85, 6.4, 0]} castShadow>
-            <boxGeometry args={[0.5, 0.7, 0.4]} />
+          <mesh position={[-side * 1.05, GATE.height * 0.62, 0.6]} castShadow>
+            <boxGeometry args={[0.6, 0.85, 0.5]} />
             <meshStandardMaterial color="#2A2A2A" roughness={0.7} metalness={0.3} />
           </mesh>
-          <mesh position={[-side * 0.85, 6.4, 0]}>
-            <boxGeometry args={[0.32, 0.46, 0.26]} />
+          <mesh position={[-side * 1.05, GATE.height * 0.62, 0.6]}>
+            <boxGeometry args={[0.4, 0.58, 0.32]} />
             <meshBasicMaterial color="#FFB040" />
           </mesh>
-          <pointLight position={[-side * 1.1, 6.4, 0]} color="#FFA83C" intensity={9} distance={12} decay={2} />
+          <pointLight
+            position={[-side * 1.4, GATE.height * 0.62, 1.2]}
+            color="#FFA83C"
+            intensity={22}
+            distance={16}
+            decay={2}
+          />
         </group>
       ))}
     </group>

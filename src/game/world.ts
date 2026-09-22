@@ -52,38 +52,43 @@ export const STATIONS: Station[] = ring(5, 13.5, -Math.PI / 2 + 0.55).map((p, i)
 }));
 
 /** Pines ring the plaza; two inner clusters frame the gate approach. */
+/** The approach corridor outside the gate is kept clear of trees and props. */
+const inApproach = (x: number, z: number) => z > 16 && Math.abs(x) < 11;
+
 export const TREES: TreeSpot[] = [
   ...ring(18, 24.5, 0.2).map((p, i) => ({ x: p.x, z: p.z, scale: 0.85 + ((i * 7) % 5) * 0.12, seed: 100 + i })),
-  ...ring(11, 29, 0.55).map((p, i) => ({ x: p.x, z: p.z, scale: 1.1 + ((i * 3) % 4) * 0.15, seed: 200 + i })),
-  { x: -7.5, z: 15.5, scale: 1.25, seed: 301 },
-  { x: -10.5, z: 17.5, scale: 0.95, seed: 302 },
-  { x: 7.5, z: 15.5, scale: 1.25, seed: 303 },
-  { x: 10.5, z: 17.5, scale: 0.95, seed: 304 },
-];
+  ...ring(11, 31, 0.55).map((p, i) => ({ x: p.x, z: p.z, scale: 1.1 + ((i * 3) % 4) * 0.15, seed: 200 + i })),
+  { x: -8.5, z: 14.5, scale: 1.25, seed: 301 },
+  { x: -12.5, z: 11.5, scale: 0.95, seed: 302 },
+  { x: 8.5, z: 14.5, scale: 1.25, seed: 303 },
+  { x: 12.5, z: 11.5, scale: 0.95, seed: 304 },
+].filter((t) => !inApproach(t.x, t.z));
 
 export const CASTLE = {
   /** Facade centre; the building wall runs along the north edge. */
   z: -22,
-  width: 30,
-  height: 13,
-  depth: 8,
-  doorWidth: 4.2,
-  doorHeight: 5,
+  width: 34,
+  height: 14,
+  depth: 9,
+  doorWidth: 7.5,
+  doorHeight: 7,
+  /** Radius of the rounded tower wing that caps each end of the facade. */
+  wingRadius: 5.2,
 };
 
 export const GATE = {
   z: 20,
-  /** Each leaf's width. The opening between the two leaves is 2 * gap. */
-  leafWidth: 6.5,
-  height: 10,
-  gap: 2.6,
+  /** Each leaf's width. Closed, the two leaves nearly meet on the centre line. */
+  leafWidth: 3.9,
+  height: 9.5,
+  gap: 0.25,
 };
 
-export const ICE_TREE = { x: 0, z: 0, height: 6.4, crownRadius: 3.4 };
+export const ICE_TREE = { x: 0, z: 0, height: 8.2, crownRadius: 5.4 };
 
 /** Static colliders. Stations and lanterns are added at runtime from the lists above. */
 export const COLLIDERS: Collider[] = [
-  { kind: 'circle', x: ICE_TREE.x, z: ICE_TREE.z, r: 2.4 },
+  { kind: 'circle', x: ICE_TREE.x, z: ICE_TREE.z, r: 3.4 },
   // Castle facade, split so the doorway stays walkable.
   { kind: 'box', x: -(CASTLE.doorWidth / 2 + CASTLE.width / 4), z: CASTLE.z, hw: CASTLE.width / 4, hd: CASTLE.depth / 2 },
   { kind: 'box', x: CASTLE.doorWidth / 2 + CASTLE.width / 4, z: CASTLE.z, hw: CASTLE.width / 4, hd: CASTLE.depth / 2 },

@@ -104,36 +104,77 @@ export function branchGeometry(seed: number, height: number, spread: number): TH
     }
   };
 
-  const trunk = new THREE.CylinderGeometry(0.12, 0.22, trunkTop, 7);
+  const trunk = new THREE.CylinderGeometry(0.3, 0.55, trunkTop, 9);
   trunk.translate(0, trunkTop / 2, 0);
   parts.push(trunk);
+  const flare = new THREE.CylinderGeometry(0.55, 1.05, trunkTop * 0.22, 9);
+  flare.translate(0, trunkTop * 0.11, 0);
+  parts.push(flare);
 
   const majorAngles = [30, 45, 60, 120, 135, 150];
   majorAngles.forEach((deg, i) => {
     const around = (Math.PI * 2 * i) / majorAngles.length + rand(rnd, -0.2, 0.2);
     const elev = (deg * Math.PI) / 180;
     const dir = new THREE.Vector3(Math.cos(around) * Math.cos(elev), Math.sin(elev), Math.sin(around) * Math.cos(elev)).normalize();
-    addLimb(new THREE.Vector3(0, trunkTop, 0), dir, spread * rand(rnd, 0.55, 0.8), 0.11, 0);
+    addLimb(new THREE.Vector3(0, trunkTop, 0), dir, spread * rand(rnd, 0.5, 0.72), 0.26, 0);
   });
 
   return mergeGeometries(parts);
 }
 
-/** Snow caps that sit on the branch tips of the ice tree. */
+/**
+ * The frosted crown. Built as a ring of overlapping lobes rather than one dome,
+ * so the canopy has the wide, sculpted silhouette of the reference tree instead
+ * of reading as a single cloud.
+ */
 export function branchSnowGeometry(seed: number, height: number, spread: number): THREE.BufferGeometry {
   const rnd = mulberry32(seed + 17);
   const parts: THREE.BufferGeometry[] = [];
-  const count = 46;
-  for (let i = 0; i < count; i++) {
+  const crownY = height * 0.62;
+
+  // Six major lobes around the crown, each a flattened cluster.
+  const lobes = 6;
+  for (let l = 0; l < lobes; l++) {
+    const a = (Math.PI * 2 * l) / lobes + rand(rnd, -0.18, 0.18);
+    const lobeR = spread * rand(rnd, 0.62, 0.86);
+    const lobeY = crownY + rand(rnd, -0.5, 1.5);
+    const lobeSize = spread * rand(rnd, 0.34, 0.46);
+    const cx = Math.cos(a) * lobeR;
+    const cz = Math.sin(a) * lobeR;
+    for (let i = 0; i < 16; i++) {
+      const ia = rand(rnd, 0, Math.PI * 2);
+      const ir = rand(rnd, 0, lobeSize);
+      const blob = new THREE.SphereGeometry(rand(rnd, 0.5, 0.95), 8, 6);
+      blob.scale(1.2, 0.72, 1.2);
+      blob.translate(
+        cx + Math.cos(ia) * ir,
+        lobeY + rand(rnd, -0.5, 0.55) - ir * 0.25,
+        cz + Math.sin(ia) * ir,
+      );
+      parts.push(blob);
+    }
+  }
+
+  // Raised centre mass so the crown peaks above the lobes.
+  for (let i = 0; i < 26; i++) {
     const a = rand(rnd, 0, Math.PI * 2);
-    const r = rand(rnd, spread * 0.15, spread * 0.85);
-    const y = height * rand(rnd, 0.52, 1.0);
-    const s = rand(rnd, 0.16, 0.38);
-    const blob = new THREE.SphereGeometry(s, 7, 6);
-    blob.scale(1.5, 0.55, 1.2);
-    blob.translate(Math.cos(a) * r, y, Math.sin(a) * r);
+    const r = rand(rnd, 0, spread * 0.42);
+    const blob = new THREE.SphereGeometry(rand(rnd, 0.55, 1.0), 8, 6);
+    blob.scale(1.15, 0.78, 1.15);
+    blob.translate(Math.cos(a) * r, crownY + rand(rnd, 0.7, 2.1) - r * 0.2, Math.sin(a) * r);
     parts.push(blob);
   }
+
+  // Snow resting along the lower limbs, tying the crown to the branches.
+  for (let i = 0; i < 34; i++) {
+    const a = rand(rnd, 0, Math.PI * 2);
+    const r = rand(rnd, spread * 0.3, spread * 0.92);
+    const blob = new THREE.SphereGeometry(rand(rnd, 0.3, 0.6), 7, 5);
+    blob.scale(1.5, 0.5, 1.5);
+    blob.translate(Math.cos(a) * r, crownY - rand(rnd, 0.8, 2.4), Math.sin(a) * r);
+    parts.push(blob);
+  }
+
   return mergeGeometries(parts);
 }
 

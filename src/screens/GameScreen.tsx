@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 import { Canvas } from '@react-three/fiber/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as THREE from 'three';
 import * as Speech from 'expo-speech';
 import * as Haptics from 'expo-haptics';
 
@@ -11,36 +10,13 @@ import { pressKey, releaseAllKeys, releaseKey, resetInput, type LogicalKey } fro
 import { SOUND_SETS } from '../game/words';
 import { STATIONS } from '../game/world';
 import { TOTAL_WORDS, useGame } from '../game/store';
-import { Banners, Castle, Clouds, Ground, Mountains, PineForest, SkyDome } from '../world3d/Scenery';
-import { CastleGate, IceCrystalTree, Snowfall, SpeechStations, StoneLanterns } from '../world3d/Props';
+import { CastleScene, applySceneDefaults } from '../world3d/CastleScene';
 import { Player, type PlayerSnapshot } from '../world3d/Player';
 import { ControlHints, InteractPrompt, Minimap, RoundButton, StarCounter, Toast } from '../ui/HUD';
 import { Joystick } from '../ui/Joystick';
 import { KeyboardHost } from '../ui/KeyboardHost';
 import { LookPad } from '../ui/LookPad';
 import { SpeechChallenge } from '../ui/SpeechChallenge';
-
-function Lighting() {
-  return (
-    <>
-      <hemisphereLight args={['#DCEBFA', '#9FB0C0', 2.4]} />
-      <directionalLight
-        position={[22, 46, -16]}
-        intensity={2.6}
-        color="#FFF3DC"
-        castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
-        shadow-camera-left={-34}
-        shadow-camera-right={34}
-        shadow-camera-top={34}
-        shadow-camera-bottom={-34}
-        shadow-camera-far={90}
-      />
-      <ambientLight intensity={0.75} color="#CFE2F5" />
-    </>
-  );
-}
 
 export default function GameScreen({ onExit }: { onExit: () => void }) {
   const insets = useSafeAreaInsets();
@@ -199,25 +175,14 @@ export default function GameScreen({ onExit }: { onExit: () => void }) {
         shadows
         gl={{ antialias: true }}
         camera={{ fov: 72, near: 0.1, far: 300, position: [0, 1.5, 17.5], rotation: [0, 0, 0] }}
-        onCreated={({ gl, scene }) => {
-          gl.setClearColor(new THREE.Color(Palette.skyHorizon));
-          gl.shadowMap.type = THREE.PCFShadowMap;
-          scene.fog = new THREE.Fog(Palette.skyHorizon, 44, 135);
-        }}
+        onCreated={({ gl, scene }) => applySceneDefaults(gl, scene)}
       >
-        <Lighting />
-        <SkyDome />
-        <Mountains />
-        <Clouds />
-        <Ground />
-        <Castle />
-        <Banners />
-        <CastleGate />
-        <PineForest />
-        <IceCrystalTree />
-        <StoneLanterns />
-        <SpeechStations progress={progress} highlightId={snapshot.nearStationId} />
-        <Snowfall count={700} />
+        <CastleScene
+          progress={progress}
+          highlightId={snapshot.nearStationId}
+          snowCount={700}
+          reflectivity={0.45}
+        />
         <Player
           onUpdate={handleUpdate}
           onInteract={handleInteract}
