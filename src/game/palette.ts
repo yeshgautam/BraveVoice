@@ -1,0 +1,32 @@
+/** Shared colour language for the whole BraveVoice world. */
+export const Palette = {
+  skyTop: '#87CEEB',
+  skyHorizon: '#B8D9F0',
+  woodDark: '#2C1A0A',
+  woodMid: '#4A2E10',
+  woodHighlight: '#6B4220',
+  facade: '#0F1F35',
+  facadeLight: '#1A3050',
+  glass: '#C8E6FF',
+  interiorGlow: '#FFE8C0',
+  banner: '#1A3A7A',
+  bannerBorder: '#2E5BB5',
+  logoGlow: '#00BFFF',
+  crystalBlue: '#00BFFF',
+  crystalCore: '#7DF9FF',
+  marbleBase: '#B8C8D8',
+  marbleTint: '#A0B8CC',
+  compass: '#4A7AB5',
+  snow: '#F0F8FF',
+  pineDark: '#1E3D28',
+  pineMid: '#2D5A3D',
+  pineDeep: '#162E1E',
+  mountainGrey: '#8899AA',
+  mountainSnow: '#EEF4FA',
+  lanternGold: '#FFD080',
+  trunk: '#4A2E1A',
+  stone: '#7A8590',
+  gold: '#C49A2A',
+} as const;
+
+export const FONT = 'FredokaOne_400Regular';

@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "BraveVoice",
+    "slug": "bravevoice",
+    "version": "1.0.0",
+    "orientation": "landscape",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#0F1F35",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "requireFullScreen": true,
+      "bundleIdentifier": "com.bravevoice.app",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "BraveVoice listens while your child practises each word so it can cheer them on. Audio stays on the device.",
+        "NSSpeechRecognitionUsageDescription": "BraveVoice uses speech features to read practice words aloud.",
+        "UIRequiresFullScreen": true
+      }
+    },
+    "android": {
+      "package": "com.bravevoice.app",
+      "permissions": ["RECORD_AUDIO"]
+    },
+    "plugins": [
+      "expo-font",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "BraveVoice listens while your child practises each word so it can cheer them on."
+        }
+      ]
+    ]
+  }
+}
