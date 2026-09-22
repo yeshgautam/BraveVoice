@@ -91,7 +91,7 @@ export function branchGeometry(seed: number, height: number, spread: number): TH
     geo.applyQuaternion(quat);
     geo.translate(mid.x, mid.y, mid.z);
     parts.push(geo);
-    if (depth >= 3) return;
+    if (depth >= 2) return;
     const children = depth === 0 ? 3 : 2;
     for (let i = 0; i < children; i++) {
       const next = dir
@@ -100,7 +100,7 @@ export function branchGeometry(seed: number, height: number, spread: number): TH
         .applyAxisAngle(new THREE.Vector3(1, 0, 0), rand(rnd, -0.6, 0.7))
         .normalize();
       next.y = Math.max(0.15, next.y);
-      addLimb(to, next.normalize(), length * rand(rnd, 0.5, 0.72), thickness * 0.62, depth + 1);
+      addLimb(to, next.normalize(), length * rand(rnd, 0.4, 0.55), thickness * 0.6, depth + 1);
     }
   };
 
@@ -133,15 +133,15 @@ export function branchSnowGeometry(seed: number, height: number, spread: number)
   const crownY = height * 0.62;
 
   // Six major lobes around the crown, each a flattened cluster.
-  const lobes = 6;
+  const lobes = 8;
   for (let l = 0; l < lobes; l++) {
     const a = (Math.PI * 2 * l) / lobes + rand(rnd, -0.18, 0.18);
-    const lobeR = spread * rand(rnd, 0.62, 0.86);
+    const lobeR = spread * rand(rnd, 0.72, 0.98);
     const lobeY = crownY + rand(rnd, -0.5, 1.5);
-    const lobeSize = spread * rand(rnd, 0.34, 0.46);
+    const lobeSize = spread * rand(rnd, 0.42, 0.56);
     const cx = Math.cos(a) * lobeR;
     const cz = Math.sin(a) * lobeR;
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 18; i++) {
       const ia = rand(rnd, 0, Math.PI * 2);
       const ir = rand(rnd, 0, lobeSize);
       const blob = new THREE.SphereGeometry(rand(rnd, 0.5, 0.95), 8, 6);
@@ -241,10 +241,10 @@ export function radialGlowTexture(inner: string, outer: string, size = 128): THR
 export function courtyardTexture(size = 512): THREE.Texture {
   const data = new Uint8Array(size * size * 4);
   const rnd = mulberry32(2024);
-  const base = new THREE.Color('#B8C8D8');
-  const tint = new THREE.Color('#A0B8CC');
-  const vein = new THREE.Color('#8CA5BE');
-  const compass = new THREE.Color('#4A7AB5');
+  const base = new THREE.Color('#E8EFF5');
+  const tint = new THREE.Color('#D2DFEA');
+  const vein = new THREE.Color('#AFC3D6');
+  const compass = new THREE.Color('#3E6FAA');
   const half = size / 2;
 
   const veins = Array.from({ length: 26 }, () => ({
@@ -302,10 +302,10 @@ export function courtyardTexture(size = 512): THREE.Texture {
 export function woodTexture(size = 256): THREE.Texture {
   const data = new Uint8Array(size * size * 4);
   const rnd = mulberry32(77);
-  const dark = new THREE.Color('#2C1A0A');
-  const mid = new THREE.Color('#4A2E10');
-  const light = new THREE.Color('#6B4220');
-  const planks = 8;
+  const dark = new THREE.Color('#6A5235');
+  const mid = new THREE.Color('#8C6E49');
+  const light = new THREE.Color('#B2906A');
+  const planks = 7;
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       const i = (y * size + x) * 4;
@@ -314,7 +314,7 @@ export function woodTexture(size = 256): THREE.Texture {
       const wobble = Math.sin(y * 0.09 + plank * 2.3) * 0.06 + Math.sin(y * 0.021 + plank) * 0.09;
       const grain = Math.sin((inPlank + wobble) * Math.PI * 14 + plank * 5) * 0.5 + 0.5;
       const c = dark.clone().lerp(mid, grain * 0.75).lerp(light, grain * grain * 0.28);
-      if (inPlank < 0.035 || inPlank > 0.965) c.lerp(dark, 0.85);
+      if (inPlank < 0.03 || inPlank > 0.97) c.lerp(new THREE.Color('#3E2E1B'), 0.8);
       const n = rand(rnd, -0.015, 0.015);
       data[i] = Math.round(Math.min(255, Math.max(0, (c.r + n) * 255)));
       data[i + 1] = Math.round(Math.min(255, Math.max(0, (c.g + n) * 255)));

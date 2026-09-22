@@ -52,10 +52,10 @@ export function IceCrystalTree() {
   return (
     <group position={[ICE_TREE.x, 0, ICE_TREE.z]}>
       <mesh geometry={branches} castShadow>
-        <meshStandardMaterial color="#9FB3C4" roughness={0.65} metalness={0.05} flatShading />
+        <meshStandardMaterial color="#6E5236" roughness={0.9} flatShading />
       </mesh>
-      <mesh geometry={snow}>
-        <meshStandardMaterial color={Palette.snow} roughness={0.75} flatShading />
+      <mesh geometry={snow} castShadow>
+        <meshStandardMaterial color="#FFFFFF" roughness={0.68} flatShading />
       </mesh>
 
       <group ref={glowGroup}>
@@ -173,36 +173,53 @@ export function StoneLanterns() {
 /* Gate                                                                */
 /* ------------------------------------------------------------------ */
 
+/** The chrome owl roundel mounted on each gate leaf. */
 function OwlMedallion({ radius }: { radius: number }) {
+  const R = radius;
   return (
     <group>
       <mesh>
-        <cylinderGeometry args={[radius, radius, 0.12, 24]} />
-        <meshStandardMaterial color="#14284F" roughness={0.5} metalness={0.3} />
+        <cylinderGeometry args={[R, R, 0.16, 40]} />
+        <meshStandardMaterial color="#C9D4DC" metalness={0.92} roughness={0.28} />
       </mesh>
-      <mesh position={[0, 0.07, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[radius * 0.86, radius, 24]} />
-        <meshBasicMaterial color="#64A0DC" transparent opacity={0.85} side={THREE.DoubleSide} />
+      <mesh position={[0, 0.09, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[R * 0.9, R * 0.99, 40]} />
+        <meshStandardMaterial color="#8FA6B8" metalness={0.9} roughness={0.3} side={THREE.DoubleSide} />
       </mesh>
-      <mesh position={[0, 0.07, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[radius * 0.6, radius * 0.68, 24]} />
-        <meshBasicMaterial color="#64A0DC" transparent opacity={0.55} side={THREE.DoubleSide} />
+      <mesh position={[0, 0.1, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[R * 0.74, R * 0.8, 40]} />
+        <meshStandardMaterial
+          color="#6FD0FF"
+          emissive="#4FC3F7"
+          emissiveIntensity={1.2}
+          side={THREE.DoubleSide}
+        />
       </mesh>
-      {[-1, 1].map((s) => (
-        <group key={s}>
-          <mesh position={[s * radius * 0.3, 0.08, -radius * 0.12]} rotation={[Math.PI / 2, 0, 0]}>
-            <circleGeometry args={[radius * 0.24, 16]} />
-            <meshBasicMaterial color="#FFFFFF" />
+      <mesh position={[0, 0.095, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[R * 0.72, 40]} />
+        <meshStandardMaterial color="#E4EDF3" metalness={0.72} roughness={0.34} />
+      </mesh>
+
+      {/* Owl face: ringed eyes, beak and brow, dark against the bright disc */}
+      {[-1, 1].map((sx) => (
+        <group key={sx}>
+          <mesh position={[sx * R * 0.3, 0.105, -R * 0.06]} rotation={[Math.PI / 2, 0, 0]}>
+            <ringGeometry args={[R * 0.17, R * 0.25, 28]} />
+            <meshStandardMaterial color="#2B3A47" side={THREE.DoubleSide} />
           </mesh>
-          <mesh position={[s * radius * 0.3, 0.09, -radius * 0.12]} rotation={[Math.PI / 2, 0, 0]}>
-            <circleGeometry args={[radius * 0.1, 12]} />
-            <meshBasicMaterial color="#08111F" />
+          <mesh position={[sx * R * 0.3, 0.105, -R * 0.06]} rotation={[Math.PI / 2, 0, 0]}>
+            <circleGeometry args={[R * 0.13, 24]} />
+            <meshStandardMaterial color="#1C2733" />
           </mesh>
         </group>
       ))}
-      <mesh position={[0, 0.09, radius * 0.16]} rotation={[Math.PI / 2, 0, Math.PI]}>
-        <coneGeometry args={[radius * 0.13, radius * 0.24, 3]} />
-        <meshBasicMaterial color="#FFB040" />
+      <mesh position={[0, 0.105, R * 0.04]} rotation={[Math.PI / 2, 0, Math.PI]}>
+        <circleGeometry args={[R * 0.12, 3]} />
+        <meshStandardMaterial color="#2B3A47" />
+      </mesh>
+      <mesh position={[0, 0.105, -R * 0.32]} rotation={[Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[R * 0.42, R * 0.48, 28, 1, Math.PI * 0.18, Math.PI * 0.64]} />
+        <meshStandardMaterial color="#2B3A47" side={THREE.DoubleSide} />
       </mesh>
     </group>
   );
@@ -263,8 +280,8 @@ export function CastleGate({ animate = false }: { animate?: boolean }) {
             ))}
 
             {/* Owl medallion on the inner face, turned to the courtyard */}
-            <group position={[0, 1.4, 0.32]} rotation={[Math.PI / 2, 0, 0]}>
-              <OwlMedallion radius={2.1} />
+            <group position={[0, 0.9, -0.34]} rotation={[Math.PI / 2, 0, 0]}>
+              <OwlMedallion radius={1.55} />
             </group>
 
             {/* Gold strap hinges on the outer edge */}
@@ -312,10 +329,33 @@ export function CastleGate({ animate = false }: { animate?: boolean }) {
           <pointLight
             position={[-side * 1.4, GATE.height * 0.62, 1.2]}
             color="#FFA83C"
-            intensity={22}
-            distance={16}
+            intensity={30}
+            distance={18}
             decay={2}
           />
+          {/* Blue star banner hanging beside the gate */}
+          <group position={[-side * 1.0, GATE.height * 0.66, 1.05]}>
+            <mesh>
+              <planeGeometry args={[1.5, 5.2]} />
+              <meshStandardMaterial color={Palette.banner} side={THREE.DoubleSide} roughness={0.85} />
+            </mesh>
+            <mesh position={[0, -3.05, 0]}>
+              <coneGeometry args={[1.06, 0.95, 4]} />
+              <meshStandardMaterial color="#16336E" side={THREE.DoubleSide} roughness={0.85} />
+            </mesh>
+            <mesh position={[0, 0.4, 0.02]}>
+              <ringGeometry args={[0.44, 0.56, 8]} />
+              <meshBasicMaterial color="#EAF6FF" side={THREE.DoubleSide} toneMapped={false} />
+            </mesh>
+            <mesh position={[0, 0.4, 0.02]} rotation={[0, 0, Math.PI / 8]}>
+              <ringGeometry args={[0.14, 0.46, 8]} />
+              <meshBasicMaterial color="#EAF6FF" side={THREE.DoubleSide} toneMapped={false} />
+            </mesh>
+            <mesh position={[0, 2.68, 0]}>
+              <boxGeometry args={[1.8, 0.18, 0.18]} />
+              <meshStandardMaterial color={Palette.gold} metalness={0.85} roughness={0.3} />
+            </mesh>
+          </group>
         </group>
       ))}
     </group>

@@ -191,10 +191,10 @@ function WindowWall({
       for (let c = 0; c < columns; c++) {
         out.push({
           x: -width / 2 + 0.3 + cw * (c + 0.5),
-          y: r * 3.1,
-          w: cw * 0.86,
-          h: 2.1,
-          warm: rand(rnd, 0.45, 1),
+          y: r * 3.3,
+          w: cw * 0.92,
+          h: 2.75,
+          warm: rand(rnd, 0.55, 1),
         });
       }
     }
@@ -285,7 +285,7 @@ export function Castle() {
             <meshStandardMaterial color={Palette.facade} roughness={0.65} metalness={0.12} />
           </mesh>
           {/* Two storeys of lit glass facing the courtyard */}
-          <WindowWall width={wing - 1.2} rows={2} columns={4} y={4.6} z={depth / 2 + 0.06} />
+          <WindowWall width={wing - 0.7} rows={3} columns={5} y={3.4} z={depth / 2 + 0.06} />
           {/* Snow on the parapet */}
           <mesh position={[0, height + 0.18, 0]}>
             <boxGeometry args={[wing + 0.5, 0.42, depth + 0.5]} />
@@ -401,10 +401,10 @@ export function Banners() {
     });
   });
   const spots: Array<{ x: number; z: number; ry: number }> = [
-    { x: -9.5, z: CASTLE.z + CASTLE.depth / 2 + 0.3, ry: 0 },
-    { x: 9.5, z: CASTLE.z + CASTLE.depth / 2 + 0.3, ry: 0 },
-    { x: -(GATE.gap + GATE.leafWidth + 0.6), z: GATE.z - 0.4, ry: Math.PI },
-    { x: GATE.gap + GATE.leafWidth + 0.6, z: GATE.z - 0.4, ry: Math.PI },
+    { x: -7.2, z: CASTLE.z + CASTLE.depth / 2 + 0.35, ry: 0 },
+    { x: 7.2, z: CASTLE.z + CASTLE.depth / 2 + 0.35, ry: 0 },
+    { x: -13.5, z: CASTLE.z + CASTLE.depth / 2 + 0.35, ry: 0 },
+    { x: 13.5, z: CASTLE.z + CASTLE.depth / 2 + 0.35, ry: 0 },
   ];
   return (
     <group>
@@ -427,7 +427,7 @@ export function Banners() {
           </mesh>
           <mesh position={[0, -2.2, 0.02]}>
             <ringGeometry args={[0.42, 0.52, 8]} />
-            <meshBasicMaterial color="#C8E6FF" side={THREE.DoubleSide} transparent opacity={0.9} />
+            <meshBasicMaterial color="#EAF6FF" side={THREE.DoubleSide} toneMapped={false} />
           </mesh>
           <mesh position={[0, -2.2, 0.02]} rotation={[0, 0, Math.PI / 8]}>
             <ringGeometry args={[0.16, 0.44, 8]} />

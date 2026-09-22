@@ -10,11 +10,11 @@ import type { StationProgress } from '../game/store';
 export function Lighting() {
   return (
     <>
-      <hemisphereLight args={['#EAF4FF', '#BFD0DE', 3.1]} />
+      <hemisphereLight args={['#FFFFFF', '#D8E6F2', 3.4]} />
       <directionalLight
         position={[22, 46, -16]}
-        intensity={3.0}
-        color="#FFF6E6"
+        intensity={3.6}
+        color="#FFFBF2"
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
@@ -24,9 +24,9 @@ export function Lighting() {
         shadow-camera-bottom={-38}
         shadow-camera-far={110}
       />
-      <ambientLight intensity={1.15} color="#DCEBFA" />
+      <ambientLight intensity={1.5} color="#EAF4FF" />
       {/* Fill from the courtyard so the gate faces are never silhouettes. */}
-      <pointLight position={[0, 6, 14]} color="#CFE6FF" intensity={70} distance={34} decay={2} />
+      <pointLight position={[0, 7, 16]} color="#EAF6FF" intensity={95} distance={40} decay={2} />
     </>
   );
 }
@@ -52,7 +52,7 @@ export function CastleScene({
   showStations = true,
   animateGate = false,
   snowCount = 700,
-  reflectivity = 0.55,
+  reflectivity = 0.42,
 }: CastleSceneProps) {
   return (
     <>
@@ -77,7 +77,7 @@ export function CastleScene({
 export function applySceneDefaults(gl: THREE.WebGLRenderer, scene: THREE.Scene) {
   gl.setClearColor(new THREE.Color(Palette.skyHorizon));
   gl.shadowMap.type = THREE.PCFShadowMap;
-  gl.toneMapping = THREE.ACESFilmicToneMapping;
-  gl.toneMappingExposure = 1.5;
-  scene.fog = new THREE.Fog(Palette.skyHorizon, 60, 165);
+  gl.toneMapping = THREE.NoToneMapping;
+  gl.toneMappingExposure = 1.05;
+  scene.fog = new THREE.Fog('#DCEDF9', 75, 190);
 }
