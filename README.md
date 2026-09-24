@@ -6,26 +6,39 @@ practises a target speech sound at each one.
 
 ## Running it on the iPad simulator
 
-The project needs a native build because it uses Skia, Reanimated worklets,
-expo-gl and the microphone. Expo Go will not load it.
+You need a Mac with Xcode installed, plus Node 18 or newer. The project uses
+Skia, Reanimated worklets, expo-gl and the microphone, so it needs a native
+build. **Expo Go will not run it.**
 
 ```bash
+git checkout claude/youthful-archimedes-hnkio3
 npm install
-npx expo run:ios --device "iPad Pro 13-inch (M4)"
-```
-
-`xcrun simctl list devices available` lists the simulators installed on your
-machine if that name does not match. To pick the device interactively:
-
-```bash
 npx expo run:ios
 ```
 
-The first build compiles the native project and takes several minutes. After
-that, `npm start` and pressing `i` reuses it.
+`expo run:ios` generates the native project, installs pods and builds. The first
+run takes several minutes; later runs reuse the build.
 
-The simulator has no microphone input, so speaking rounds fall back to practice
-mode and still award stars. Run on a physical iPad to score a real voice.
+To pick an iPad explicitly, list what you have and name one:
+
+```bash
+xcrun simctl list devices available | grep iPad
+npx expo run:ios --device "iPad Pro 13-inch (M4)"
+```
+
+After the first build, `npx expo start` and pressing `i` relaunches it.
+
+Two things to know once it opens:
+
+- **Type on the simulator with your Mac keyboard** by turning on I/O → Keyboard →
+  Connect Hardware Keyboard (Shift-Cmd-K). Without it, W/A/S/D go to macOS and
+  the player will not move.
+- **The simulator has no microphone**, so speaking rounds run in practice mode
+  and still award stars. Use a physical iPad to score a real voice.
+
+If the build fails, the usual causes are CocoaPods missing (`brew install
+cocoapods`) or Xcode's command line tools not selected
+(`sudo xcode-select -s /Applications/Xcode.app`).
 
 ## Controls
 
