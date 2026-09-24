@@ -30,9 +30,9 @@ After the first build, `npx expo start` and pressing `i` relaunches it.
 
 Two things to know once it opens:
 
-- **Type on the simulator with your Mac keyboard** by turning on I/O → Keyboard →
-  Connect Hardware Keyboard (Shift-Cmd-K). Without it, W/A/S/D go to macOS and
-  the player will not move.
+- **Drive it with the mouse.** Drag the on-screen stick to walk and drag the
+  right of the screen to look. The native build has no hardware-key support, so
+  W/A/S/D do nothing there.
 - **The simulator has no microphone**, so speaking rounds run in practice mode
   and still award stars. Use a physical iPad to score a real voice.
 
@@ -42,7 +42,13 @@ cocoapods`) or Xcode's command line tools not selected
 
 ## Controls
 
-| Input | Action |
+On iPad and iPhone the game is driven by touch: the left thumbstick walks and
+steps sideways, dragging the right half of the screen looks around, and the
+round SPEAK button opens a challenge when a crystal is in range.
+
+The web build (`npm run web`) additionally takes a hardware keyboard:
+
+| Key | Action |
 | --- | --- |
 | `W` / `↑` | Walk forward |
 | `S` / `↓` | Walk back |
@@ -53,9 +59,11 @@ cocoapods`) or Xcode's command line tools not selected
 | `M` | Toggle the control hints |
 | `Esc` | Close a challenge |
 
-Touch works everywhere a keyboard does: the left thumbstick walks, dragging the
-right half of the screen looks around, and the round button opens a challenge.
-A Magic Keyboard or any Bluetooth keyboard drives the game directly on iPadOS.
+There is no hardware-keyboard support in the native build. Reading physical keys
+on iOS needs UIResponder key events, and the community package for that does not
+compile against React Native 0.86 on the new architecture. `KeyboardHost.tsx` is
+the seam where it would be reinstated: implement it and the rest of the input
+system already handles those keys.
 
 ## Layout
 

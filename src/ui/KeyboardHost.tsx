@@ -1,8 +1,7 @@
-import React, { useCallback } from 'react';
-import type { StyleProp, ViewStyle } from 'react-native';
-import { KeyboardFocusView, type OnKeyPress } from 'react-native-external-keyboard';
+import React from 'react';
+import { View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { keyFor, type LogicalKey } from '../game/input';
+import type { LogicalKey } from '../game/input';
 
 export type KeyboardHostProps = {
   onKey: (key: LogicalKey, down: boolean) => void;
@@ -12,36 +11,17 @@ export type KeyboardHostProps = {
 };
 
 /**
- * Hardware-keyboard host. On iOS and iPadOS this is a focusable native view, so
- * a Magic Keyboard or any Bluetooth keyboard drives the game directly.
+ * Native builds drive the game from the on-screen stick and look pad.
+ *
+ * Reading a physical keyboard on iOS needs UIResponder key events, which no
+ * current community package compiles against React Native 0.86 with the new
+ * architecture. Rather than block the build on that, this is a plain container
+ * and the web build handles hardware keys in KeyboardHost.web.tsx.
  */
-export function KeyboardHost({ onKey, style, accessibilityLabel, children }: KeyboardHostProps) {
-  const down = useCallback(
-    (e: OnKeyPress) => {
-      const key = keyFor(e.nativeEvent.keyCode, e.nativeEvent.unicodeChar);
-      if (key) onKey(key, true);
-    },
-    [onKey],
-  );
-  const up = useCallback(
-    (e: OnKeyPress) => {
-      const key = keyFor(e.nativeEvent.keyCode, e.nativeEvent.unicodeChar);
-      if (key) onKey(key, false);
-    },
-    [onKey],
-  );
-
+export function KeyboardHost({ style, accessibilityLabel, children }: KeyboardHostProps) {
   return (
-    <KeyboardFocusView
-      style={style}
-      autoFocus
-      focusable
-      haloEffect={false}
-      onKeyDownPress={down}
-      onKeyUpPress={up}
-      accessibilityLabel={accessibilityLabel}
-    >
+    <View style={style} accessibilityLabel={accessibilityLabel}>
       {children}
-    </KeyboardFocusView>
+    </View>
   );
 }

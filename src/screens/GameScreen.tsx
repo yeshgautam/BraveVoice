@@ -100,7 +100,11 @@ export default function GameScreen({ onExit }: { onExit: () => void }) {
   );
 
   useEffect(() => {
-    flashToast('Find the five glowing crystals. Walk with W, A, S, D.');
+    flashToast(
+      Platform.OS === 'web'
+        ? 'Find the five glowing crystals. Walk with W, A, S, D.'
+        : 'Find the five glowing crystals. Use the stick to walk, drag to look.',
+    );
     return () => {
       if (toastTimer.current) clearTimeout(toastTimer.current);
     };
@@ -168,7 +172,7 @@ export default function GameScreen({ onExit }: { onExit: () => void }) {
     <KeyboardHost
       style={styles.root}
       onKey={handleKey}
-      accessibilityLabel="BraveVoice castle courtyard. Walk with W A S D and press space at a glowing crystal."
+      accessibilityLabel="BraveVoice castle courtyard. Use the stick to walk and tap Speak at a glowing crystal."
     >
       <Canvas
         style={StyleSheet.absoluteFill}

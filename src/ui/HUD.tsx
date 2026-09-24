@@ -86,22 +86,32 @@ export function InteractPrompt({ label }: { label: string }) {
   return (
     <View style={styles.prompt} pointerEvents="none">
       <Text style={styles.promptText}>{label}</Text>
-      <Text style={styles.promptHint}>{Platform.OS === 'ios' ? 'Tap SPEAK or press Space / F' : 'Press Space'}</Text>
+      <Text style={styles.promptHint}>{Platform.OS === 'web' ? 'Press Space, or tap SPEAK' : 'Tap SPEAK'}</Text>
     </View>
   );
 }
 
-export function ControlHints() {
-  return (
-    <View style={styles.hints} pointerEvents="none">
-      {[
+/** Hardware keys exist on web; on a tablet the stick and pad are the controls. */
+const HINTS: Array<[string, string]> =
+  Platform.OS === 'web'
+    ? [
         ['W', 'walk forward'],
         ['S', 'walk back'],
         ['A / D', 'step sideways'],
         ['← →', 'turn'],
         ['Shift', 'run'],
-        ['Space / F', 'talk to a crystal'],
-      ].map(([k, v]) => (
+        ['Space', 'talk to a crystal'],
+      ]
+    : [
+        ['Stick', 'walk and step sideways'],
+        ['Drag', 'look around'],
+        ['SPEAK', 'talk to a crystal'],
+      ];
+
+export function ControlHints() {
+  return (
+    <View style={styles.hints} pointerEvents="none">
+      {HINTS.map(([k, v]) => (
         <View key={k} style={styles.hintRow}>
           <Text style={styles.hintKey}>{k}</Text>
           <Text style={styles.hintText}>{v}</Text>
@@ -182,7 +192,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT,
     fontSize: 11,
     color: '#FFFFFF',
-    minWidth: 46,
+    minWidth: 54,
     textAlign: 'center',
     backgroundColor: 'rgba(255,255,255,0.12)',
     borderRadius: 5,
